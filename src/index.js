@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs')
 const { isContext } = require('vm');
-const store = new Store({encryptionKey: "KbPeShVkYp3s6v9y$B&E)H@McQfTjWnZ"})
+const store = new Store({encryptionKey: "Insérer clé de chiffrement AES"})
 
 const connect = (user) => {
   if(!user){
