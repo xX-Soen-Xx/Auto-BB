@@ -1,0 +1,36 @@
+{
+  "name": "auto-bb",
+  "version": "1.0.0",
+  "description": "Auto BB",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "asar": true,
+    "asarUnpack": "node_modules/puppeteer/.local-chromium/**/*",
+    "appId": "com.soen.autobb",
+    "productName": "Auto BB",
+    "copyright": "©2021 Soen",
+    "win": {
+      "icon": "icone.png",
+      "target": "portable"
+    }
+  },
+  "keywords": [
+    "Blackboard"
+  ],
+  "author": "Soen",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^11.1.1",
+    "electron-builder": "^22.9.1"
+  },
+  "dependencies": {
+    "electron-store": "^7.0.3",
+    "kdecole-api": "^1.0.19",
+    "puppeteer": "^8.0.0"
+  }
+}

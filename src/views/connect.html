@@ -1,0 +1,82 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../style/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+  <script defer src="../scripts/connect.js"></script>
+  <title>Connexion | Auto BB</title>
+</head>
+
+<body>
+  <div id="mbn">
+    <label for="mbnId">Identifiant MBN</label>
+    <br>
+    <input class="input is-small" type="text" name="mbnId" id="mbnId">
+    <br>
+    <label for="mbnP">Mot de passe unique</label>
+    <br>
+    <input class="input is-small" type="password" name="mbnP" id="mbnP">
+    <a href="./mbnhelp.html" target="_blank">Obtennir le mot de passe</a>
+    <br>
+    <button id="mbnv" class="button is-small is-primary">Valider</button>
+  </div>
+  <br>
+
+  <div id="cned">
+    <label for="cnedId">Identifiant CNED</label>
+    <br>
+    <input class="input is-small" type="text" name="cnedId" id="cnedId">
+    <br>
+    <label for="cnedP">Mot de passe CNED</label>
+    <br>
+    <input class="input is-small" type="password" name="cnedP" id="cnedP">
+    <br>
+    <button id="cnedv" class="button is-small is-primary">Valider</button>
+    <br>
+  </div>
+
+
+  <script defer>
+    const mbnv = document.getElementById('mbnv')
+    var mid = document.getElementById('mbnId')
+    var mp = document.getElementById('mbnP')
+    mbnv.disabled = true
+
+    mid.addEventListener('change', updateValue)
+    function updateValue(e) {
+      if (mid.value === undefined || mid.value == ' ' || mid.value == '') { mbnv.disabled = true; mid.classList.add('is-danger') }
+      else { mbnv.disabled = false; mid.classList.remove('is-danger') }
+    }
+
+    mp.addEventListener('change', updateValue)
+    function updateValue(e) {
+      if (mp.value === undefined || mp.value == ' ' || mp.value == '') { mbnv.disabled = true; mp.classList.add('is-danger') }
+      else { mbnv.disabled = false; mp.classList.remove('is-danger') }
+    }
+  </script>
+
+  <script defer>
+    const cnedv = document.getElementById('cnedv')
+    var cnedid = document.getElementById('cnedId')
+    var cnedp = document.getElementById('cnedP')
+    cnedv.disabled = true
+
+    cnedid.addEventListener('change', updateValue)
+    function updateValue(e) {
+      if (cnedid.value === undefined || cnedid.value == ' ' || cnedid.value == '') { cnedv.disabled = true; cnedid.classList.add('is-danger') }
+      else { cnedv.disabled = false; cnedid.classList.remove('is-danger') }
+    }
+
+    cnedp.addEventListener('change', updateValue)
+    function updateValue(e) {
+      if (cnedp.value === undefined || cnedp.value == ' ' || cnedp.value == '') { cnedv.disabled = true; cnedp.classList.add('is-danger') }
+      else { cnedv.disabled = false; cnedp.classList.remove('is-danger') }
+    }
+  </script>
+
+</body>
+
+</html>
