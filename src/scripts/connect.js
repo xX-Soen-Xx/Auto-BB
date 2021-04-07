@@ -6,7 +6,7 @@ const fs = require('fs')
 const path = require('path')
 const mbnV = document.getElementById('mbnv')
 const cnedV = document.getElementById('cnedv')
-const store = new Store({ encryptionKey: "KbPeShVkYp3s6v9y$B&E)H@McQfTjWnZ" })
+const store = new Store({ encryptionKey: "Insérer clé de chiffrement AES" })
 let count = 0
 
 // let keys = {
