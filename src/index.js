@@ -4,7 +4,7 @@ const Store = require('electron-store')
 const puppeteer = require('puppeteer');
 const ejse = require('ejs-electron')
 const path = require('path');
-const store = new Store({ encryptionKey: "Clé de chiffrement" })
+const store = new Store({ encryptionKey: "Clé de chiffrement"})
 
 const connect = (user) => {
   if (!user) {
