@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/messagerie.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <script src="../scripts/messagerie.js"></script>
+    <title>Messagerie | Auto BB</title>
+</head>
+
+<body>
+    <h1 class="title is-1">Messagerie</h1>
+    <div class="msgContainer columns is-desktop is-multiline has-text-light">
+        <% messages.communications.forEach(element=> { %>
+            <button onclick="viewMsg(this.id)" class="message has-text-light is-narrow" id=<%=element.id %>>
+                <div class="message column is-narrow is-full has-background-dark div">
+                    <% if (element.etatLecure) { %>
+                        <p class="is-size-5 has-text-left msgObject">
+                            <%- element.objet %>
+                        </p>
+                    <% } else { %>
+                        <p class="is-size-5 has-text-left has-text-weight-bold msgObject">
+                              <%- element.objet %>
+                        </p>
+                    <% } %>
+                    <p>
+                        <%- element.premieresLignes %>
+                    </p>
+                </div>
+            </button>
+        <% }) %>
+    </div>
+</body>
+
+</html>

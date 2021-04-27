@@ -2,18 +2,10 @@ const { Kdecole } = require('kdecole-api')
 const remote = require('electron').remote
 const Store = require('electron-store')
 const puppeteer = require('puppeteer');
-const fs = require('fs')
-const path = require('path')
 const mbnV = document.getElementById('mbnv')
 const cnedV = document.getElementById('cnedv')
-const store = new Store({ encryptionKey: "Insérer clé de chiffrement AES" })
+const store = new Store({ encryptionKey: "Clé de chiffrement" })
 let count = 0
-
-// let keys = {
-//     token: "tokenhere",
-//     cnedId: "ID",
-//     cnedP: "Pass"
-// }
 
 mbnV.onclick = e => {
     var id = document.getElementById('mbnId').value
@@ -30,7 +22,6 @@ mbnV.onclick = e => {
                 mbnV.classList.add('is-success')
                 mbnV.innerHTML = "Connecté"
                 count++
-                // keys.token = api
                 store.set('token', api)
                 close()
             })
@@ -76,8 +67,6 @@ async function checkCNED(id, pass) {
         document.getElementById('cnedv').disabled = false
         cnedV.classList.remove('is-loading')
         count++
-        // keys.cnedId = id
-        // keys.cnedP = pass
         store.set('cnedId', id)
         store.set('cnedP', pass)
         close()
@@ -95,8 +84,6 @@ async function checkCNED(id, pass) {
 function close() {
     if (count == 2) {
         var BrowserWindow = remote.getCurrentWindow();
-        // var buffer = JSON.stringify(keys, null, 2)
-        // fs.writeFileSync('../../keys.json', buffer, 'utf8', function (err) { });
         alert('La configuration initiale est maintenant terminée. \n\nL\'application va fermer. \nRelancez la et vous serez prêt')
         BrowserWindow.close()
     }

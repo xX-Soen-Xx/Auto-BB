@@ -2,13 +2,12 @@ const { app, BrowserWindow, Menu, Tray } = require('electron');
 const { Kdecole } = require('kdecole-api')
 const Store = require('electron-store')
 const puppeteer = require('puppeteer');
+const ejse = require('ejs-electron')
 const path = require('path');
-const fs = require('fs')
-const { isContext } = require('vm');
-const store = new Store({encryptionKey: "Insérer clé de chiffrement AES"})
+const store = new Store({ encryptionKey: "Clé de chiffrement" })
 
 const connect = (user) => {
-  if(!user){
+  if (!user) {
     store.delete('token')
     store.delete('cnedId')
     store.delete('cnedP')
@@ -28,7 +27,6 @@ const connect = (user) => {
   mainWindow.loadFile(path.join(__dirname, '/views/connect.html'));
 };
 
-// let json
 let user
 let timer
 let tray = null
@@ -38,13 +36,7 @@ var ready = false
 let account = false
 
 app.on('ready', () => {
-  // try {
-  //   json = JSON.parse(fs.readFileSync(path.join(__dirname, 'keys.json')));
-  // } catch (error) {
-  //   console.log(error)
-  // }
-
-  if (store.get('token') === undefined || store.get('cnedId') === undefined || store.get('cnedP') === undefined) { //json.token === undefined || json.cnedId === undefined || json.cnedP === undefined
+  if (store.get('token') === undefined || store.get('cnedId') === undefined || store.get('cnedP') === undefined) {
     let newUser = true
     connect(newUser)
   } else {
@@ -59,7 +51,7 @@ app.on('ready', () => {
 })
 
 app.on('window-all-closed', () => {
-  if (!account) process.exit(0)
+  if (store.get('cnedP') === undefined) process.exit(0)
 });
 
 function autoCheck() {
@@ -72,9 +64,9 @@ function autoCheck() {
             let id = info.communications[0].id
             user.getCommunication(id).then((communication) => {
               let content = communication.participations[0].corpsMessage.toLowerCase().toString()
-              content = content.replace(/<p>/g, '').replace(/<\/p>/g, '').replace(/<br>/g, '').split('<div class=')[0].split(' ')
+              content = content.replace(/<p>/g, '').replace(/<\/p>/g, '').replace(/<br>/g, '').replace(/<strong>/g, ' ').replace(/<\/strong>/g, ' ').split('<div class=')[0].split(' ')
               let link = content.filter(content => content.startsWith('https://l')).toString()
-              if (link) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id)}
+              if (link) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
             })
           }
         })
@@ -91,9 +83,9 @@ function manualCheck() {
           let id = info.communications[0].id
           user.getCommunication(id).then((communication) => {
             let content = communication.participations[0].corpsMessage.toLowerCase().toString()
-            content = content.replace(/<p>/g, '').replace(/<\/p>/g, '').replace(/<br>/g, '').split('<div class=')[0].split(' ')
+            content = content.replace(/<p>/g, '').replace(/<\/p>/g, '').replace(/<br>/g, '').replace(/<strong>/g, ' ').replace(/<\/strong>/g, ' ').split('<div class=')[0].split(' ')
             let link = content.filter(content => content.startsWith('http')).toString()
-            if (link) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id)}
+            if (link) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
           })
         }
       })
@@ -105,7 +97,22 @@ function createSystemTray() {
   var contextMenu = Menu.buildFromTemplate([
     {
       label: 'Changer de comptes',
-      click: function () {let newUser = false; connect(newUser) }
+      click: function () { let newUser = false; connect(newUser) }
+    },
+    {
+      label: 'Outils',
+      submenu: [
+        {
+          label: 'Voir la messagerie',
+          type: 'normal',
+          click: function () { messagerie() }
+        },
+        {
+          label: 'Voir les devoirs',
+          type: 'normal',
+          click: function () { travail() }
+        }
+      ]
     },
     { type: 'separator' },
     {
@@ -161,20 +168,20 @@ function createSystemTray() {
 }
 
 async function goSession(link) {
-  const browser = await puppeteer.launch({ 
+  const browser = await puppeteer.launch({
     headless: false,
-    defaultViewport: false, 
+    defaultViewport: false,
     ignoreDefaultArgs: ['--mute-audio'],
     executablePath: getChromiumExecPath()
   });
   const page = await browser.newPage();
-  page.goto(link, {waitUntil: 'domcontentloaded'})
+  page.goto(link, { waitUntil: 'domcontentloaded' })
   await page.waitForNavigation({ waitUntil: 'domcontentloaded' })
   await page.type('#username', store.get('cnedId'), { delay: 30 })
   await page.type('#password', store.get('cnedP'), { delay: 30 })
   page.click('#loginbtn')
 
-  browser.on('disconnected', function (){
+  browser.on('disconnected', function () {
     actif = false
     autoCheck()
   })
@@ -182,4 +189,65 @@ async function goSession(link) {
 
 function getChromiumExecPath() {
   return puppeteer.executablePath().replace('app.asar', 'app.asar.unpacked');
+}
+
+async function messagerie() {
+  await user.getMessagerieBoiteReception()
+    .then(function (info) {
+      ejse.data('messages', info)
+    })
+  let mainWindow = new BrowserWindow({
+    width: 1410,
+    height: 860,
+    frame: true,
+    webPreferences: {
+      enableRemoteModule: true,
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  });
+  mainWindow.resizable = true
+  mainWindow.setMenuBarVisibility(false)
+  mainWindow.loadURL('file://' + __dirname + '/views/messagerie.ejs')
+}
+
+async function travail() {
+  let dev = []
+  let ids = []
+  let data
+  let cycl = 0
+  await user.getTravailAFaire().then(function (taf) {
+    data = taf
+  })
+
+
+  await data.listeTravaux.forEach(async function (travail, index, array) {
+    await user.getContenuActivite(travail.listTravail[0].uidSeance, travail.listTravail[0].uid).then(async function (content) {
+      dev.push(content)
+      ids.push({
+        uid: travail.listTravail[0].uid,
+        uidSeance: travail.listTravail[0].uidSeance
+      })
+    })
+    ejse.data('devoirs', dev)
+    ejse.data('ids', ids)
+    cycl++
+    if (cycl === array.length) tafCallback()
+  })
+}
+
+function tafCallback() {
+  let mainWindow = new BrowserWindow({
+    width: 1410,
+    height: 860,
+    frame: true,
+    webPreferences: {
+      enableRemoteModule: true,
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  });
+  mainWindow.resizable = true
+  mainWindow.setMenuBarVisibility(false)
+  mainWindow.loadURL('file://' + __dirname + '/views/devs.ejs')
 }

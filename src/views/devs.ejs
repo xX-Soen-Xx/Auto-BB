@@ -1,0 +1,53 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/devs.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <script src="../scripts/devs.js"></script>
+    <title>Devoirs | Auto BB</title>
+</head>
+
+<body>
+    <h1 class="title is-1">Travail à faire</h1>
+    <div class="tafConatiner columns is-desktop is-multiline has-text-light">
+        <% devoirs.forEach(function (taf, index) { %>
+            <div class="taf column is-full has-background-dark">
+                <p class="matiere">
+                    <%- taf.matiere %>
+                </p>
+                <p class="titre">
+                    <%- taf.titre %>
+                </p>
+                <% if (taf.codeHTML.toString().startsWith('<p style="background-color:#FFB622;')) { %>
+                        <p class=" error">Impossible de récupérer les détails du travail.
+                    Celui-ci est à rendre sur l'ENT
+                    </p>
+
+                    <% } else { %>
+                        <p class="details">
+                            <%- taf.codeHTML %>
+                        </p>
+                        <% } %>
+                        <% if (taf.flagRealise==true) { %>
+                            <label class="checkbox fait has-text-grey-lighter" for=<%=index %>>
+                                <input type="checkbox" name="fait" id=<%=index %> onchange="fait(this.id)" checked>
+                                Marquer comme fait
+                            </label>
+                        <% } else { %>
+                            <label class="checkbox fait has-text-grey-lighter" for=<%=index %>>
+                                <input type="checkbox" name="fait" id=<%=index %> onchange="fait(this.id)">
+                                Marquer comme fait
+                            </label>
+                        <% } %>
+                        <p>
+                            A faire pour <%- taf.date.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })%> 
+                        </p>
+            </div>
+            <% }) %>
+    </div>
+</body>
+
+</html>

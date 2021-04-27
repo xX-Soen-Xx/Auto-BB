@@ -1,0 +1,62 @@
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/viewMessage.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.css">
+    <script defer src="../scripts/viewMessage.js"></script>
+    <title>Message | Auto BB</title>
+</head>
+
+<body>
+    <p class="title is-3 has-text-light" id="objet">
+        <%- content.objet %>
+            <br>
+            <a href="messagerie.ejs" class="has-text-weight-semibold is-size-7" id="back">← Retour</a>
+    </p>
+    <div class="buttons is-grouped is-right are-small" id="tool">
+        <button class="button is-primary is-outlined" id="repB">Répondre</button>
+        <button class="button is-danger is-outlined" id="del">Supprimer</button>
+    </div>
+    <div class="container has-text-light">
+        <% content.participations.forEach(message=> { %>
+            <div class="rep">
+                <p class="is-size-6 has-text-light">
+                    <%- message.corpsMessage %>
+                </p>
+            </div>
+            <% }) %>
+    </div>
+    <div id="repModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Répondre</h2>
+            </div>
+            <div class="modal-body">
+                <textarea class="textarea" name="reponse" id="reponse" cols="98" rows="15"
+                    placeholder="Message..."></textarea>
+            </div>
+            <div class="modal-footer buttons is-right">
+                <button id=<%=content.id %> class="button is-info" name="send" onclick="send(this.id)">Envoyer</button>
+            </div>
+        </div>
+    </div>
+    <div id="delModal" class="modal">
+        <div class="modal-content">
+            <div class="modale-header">
+                <span class="close">&times;</span>
+                <h2>Supprimer la conversation ? </h2>
+                <p>Vous ne pourrez plus répondre à celle-ci</p>
+            </div>
+            <div class="modale-body">
+                <button id=<%=content.id %> class="button is-danger yesBtn" onclick="del(this.id)">Oui</button>
+                <button class="button" id="cancel" onclick="closePop()">Annuler</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

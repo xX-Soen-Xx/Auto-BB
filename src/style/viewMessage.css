@@ -1,0 +1,167 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    background-color: rgb(30, 30, 30);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.rep {
+    border-radius: 3px;
+    background-color: rgb(41, 41, 41);
+    padding-left: 2vh;
+    padding-top: 2vh;
+    padding-right: 2vh;
+}
+
+#objet {
+    margin-left: 3vh;
+    margin-top: 3vh;
+    margin-bottom: 5vh;
+}
+
+#back {
+    margin-top: 1vh;
+    background-color: rgb(30, 30, 30);
+}
+
+#tool {
+    margin-right: 3vh;
+    margin-top: -11vh;
+    padding-bottom: 5vh;
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    -webkit-animation-name: fadeIn;
+    -webkit-animation-duration: 0.4s;
+    animation-name: fadeIn;
+    animation-duration: 0.4s
+}
+
+
+.modal-content {
+    position: fixed;
+    bottom: 0;
+    background-color: #fefefe;
+    width: 100%;
+    -webkit-animation-name: slideIn;
+    -webkit-animation-duration: 0.4s;
+    animation-name: slideIn;
+    animation-duration: 0.4s
+}
+
+
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover, .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-header {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+}
+
+.modal-header h2{
+    margin-top: 1vh !important;
+}
+
+.modal-body {
+    padding: 2px 16px;
+    background-color: darkgrey;
+}
+
+.modal-body textarea{
+    background-color: darkgrey;
+    margin-bottom: 1vh;
+    margin-top: 1vh;
+    border-color: rgba(143, 143, 143, 0.863);
+}
+
+textarea:focus{
+    outline: rgba(0, 0, 255, 0.089);
+}
+
+.modal-footer {
+    margin-bottom: auto !important;
+    color: white;
+    background-color: darkgrey;
+}
+
+@-webkit-keyframes slideIn {
+    from {
+        bottom: -300px;
+        opacity: 0
+    }
+    to {
+        bottom: 0;
+        opacity: 1
+    }
+}
+
+@keyframes slideIn {
+    from {
+        bottom: -300px;
+        opacity: 0
+    }
+    to {
+        bottom: 0;
+        opacity: 1
+    }
+}
+
+@-webkit-keyframes fadeIn {
+    from {
+        opacity: 0
+    }
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0
+    }
+    to {
+        opacity: 1
+    }
+}
+
+.modale-header {
+    padding: 2px 16px;
+    background-color: #c41e1e;
+    color: white;
+}
+
+.modale-header h2{
+    margin-top: 1vh !important;
+}
+
+.modale-body {
+    padding: 2px 16px;
+    background-color: darkgrey;
+}
