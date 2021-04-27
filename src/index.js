@@ -25,6 +25,7 @@ const connect = (user) => {
   mainWindow.resizable = false
   mainWindow.setMenuBarVisibility(false)
   mainWindow.loadFile(path.join(__dirname, '/views/connect.html'));
+  setupCompleted = true
 };
 
 let user
@@ -33,7 +34,7 @@ let tray = null
 let delay = 60000
 let actif = false
 var ready = false
-let account = false
+let setupCompleted = false
 
 app.on('ready', () => {
   if (store.get('token') === undefined || store.get('cnedId') === undefined || store.get('cnedP') === undefined) {
@@ -52,6 +53,7 @@ app.on('ready', () => {
 
 app.on('window-all-closed', () => {
   if (store.get('cnedP') === undefined) process.exit(0)
+  else if (setupCompleted) process.exit(0)
 });
 
 function autoCheck() {
@@ -63,9 +65,12 @@ function autoCheck() {
           if (info.communications[0]) {
             let id = info.communications[0].id
             user.getCommunication(id).then((communication) => {
-              let content = communication.participations[0].corpsMessage.toLowerCase().toString()
-              content = content.replace(/<p>/g, '').replace(/<\/p>/g, '').replace(/<br>/g, '').replace(/<strong>/g, ' ').replace(/<\/strong>/g, ' ').split('<div class=')[0].split(' ')
-              let link = content.filter(content => content.startsWith('https://l')).toString()
+              let content = communication.participations[0].corpsMessage.toString().toLowerCase()
+              var index = content.search(/https:\/\/lycee/g)
+              var link = content.substring(index, index + 36)
+              if (link.search(/</g) == 35) {
+                link = link.substring(35, 1)
+              }
               if (link) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
             })
           }
@@ -82,9 +87,12 @@ function manualCheck() {
         if (info.communications[0]) {
           let id = info.communications[0].id
           user.getCommunication(id).then((communication) => {
-            let content = communication.participations[0].corpsMessage.toLowerCase().toString()
-            content = content.replace(/<p>/g, '').replace(/<\/p>/g, '').replace(/<br>/g, '').replace(/<strong>/g, ' ').replace(/<\/strong>/g, ' ').split('<div class=')[0].split(' ')
-            let link = content.filter(content => content.startsWith('http')).toString()
+            let content = communication.participations[0].corpsMessage.toString().toLowerCase()
+            var index = content.search(/https:\/\/lycee/g)
+            var link = content.substring(index, index + 36)
+            if (link.search(/</g) == 35) {
+              link = link.substring(35, 1)
+            }
             if (link) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
           })
         }
