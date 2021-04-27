@@ -67,11 +67,12 @@ function autoCheck() {
             user.getCommunication(id).then((communication) => {
               let content = communication.participations[0].corpsMessage.toString().toLowerCase()
               var index = content.search(/https:\/\/lycee/g)
-              var link = content.substring(index, index + 36)
-              if (link.search(/</g) == 35) {
-                link = link.substring(35, 1)
-              }
-              if (link) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
+              var unsureLink = content.substring(index, index + 36)
+              var link = ""
+              if (unsureLink.search(/</g) == 35) {
+                link = unsureLink.substring(35, 1)
+              } else link = unsureLink
+              if (link.startsWith('h')) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
             })
           }
         })
@@ -89,11 +90,12 @@ function manualCheck() {
           user.getCommunication(id).then((communication) => {
             let content = communication.participations[0].corpsMessage.toString().toLowerCase()
             var index = content.search(/https:\/\/lycee/g)
-            var link = content.substring(index, index + 36)
-            if (link.search(/</g) == 35) {
-              link = link.substring(35, 1)
-            }
-            if (link) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
+            var unsureLink = content.substring(index, index + 36)
+            var link = ""
+            if (unsureLink.search(/</g) == 35) {
+              link = unsureLink.substring(35, 1)
+            } else link = unsureLink
+            if (link.startsWith('h')) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
           })
         }
       })
