@@ -31,7 +31,7 @@
   "dependencies": {
     "ejs-electron": "^2.1.1",
     "electron-store": "^7.0.3",
-    "kdecole-api": "^1.0.19",
+    "kdecole-api": "^1.1.1",
     "puppeteer": "^8.0.0"
   }
 }

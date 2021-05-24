@@ -1,4 +1,4 @@
-const { Kdecole } = require('kdecole-api')
+const { Kdecole, ApiUrl , ApiVersion} = require('kdecole-api')
 const remote = require('electron').remote
 const Store = require('electron-store')
 const puppeteer = require('puppeteer');
@@ -10,19 +10,79 @@ let count = 0
 mbnV.onclick = e => {
     var id = document.getElementById('mbnId').value
     var pass = document.getElementById('mbnP').value
+    var ent = document.getElementById('mbnUrl').value
+    var MBNURL = ApiUrl.PROD_MON_BUREAU_NUMERIQUE
+    var MBNVERSION = ApiVersion.PROD_MON_BUREAU_NUMERIQUE
+    switch (ent) {
+        case 'PROD_MON_BUREAU_NUMERIQUE':
+            MBNURL = ApiUrl.PROD_MON_BUREAU_NUMERIQUE
+            MBNVERSION = ApiVersion.PROD_MON_BUREAU_NUMERIQUE
+            break;
+        case 'PROD_MON_ENT_OCCITANIE':
+            MBNURL = ApiUrl.PROD_MON_ENT_OCCITANIE
+            MBNVERSION = ApiVersion.PROD_MON_ENT_OCCITANIE
+            break
+        case 'PROD_ARSENE76':
+            MBNURL = ApiUrl.PROD_ARSENE76
+            MBNVERSION = ApiVersion.PROD_ARSENE76
+            break
+        case 'PROD_ENT27':
+            MBNURL = ApiUrl.PROD_ENT27
+            MBNVERSION = ApiVersion.PROD_ENT27
+            break
+        case 'PROD_ENTCREUSE':
+            MBNURL = ApiUrl.PROD_ENTCREUSE
+            MBNVERSION = ApiVersion.PROD_ENTCREUSE
+            break
+        case 'PROD_AUVERGNERHONEALPES':
+            MBNURL = ApiUrl.PROD_AUVERGNERHONEALPES
+            MBNVERSION = ApiVersion.PROD_AUVERGNERHONEALPES
+            break
+        case 'PROD_SAVOIRSNUMERIQUES62':
+            MBNURL = ApiUrl.PROD_SAVOIRSNUMERIQUES62
+            MBNVERSION = ApiVersion.PROD_SAVOIRSNUMERIQUES62
+            break
+        case 'PROD_AGORA06':
+            MBNURL = ApiUrl.PROD_AGORA06
+            MBNVERSION = ApiVersion.PROD_AGORA06
+            break
+        case 'PROD_CYBERCOLLEGES42':
+            MBNURL = ApiUrl.PROD_CYBERCOLLEGES42
+            MBNVERSION = ApiVersion.PROD_CYBERCOLLEGES42
+            break
+        case 'PROD_ECOLLEGE_HAUTE_GARONNE':
+            MBNURL = ApiUrl.PROD_ECOLLEGE_HAUTE_GARONNE
+            MBNVERSION = ApiVersion.PROD_ECOLLEGE_HAUTE_GARONNE
+            break
+        case 'PROD_MONCOLLEGE_VALDOISE':
+            MBNURL = ApiUrl.PROD_MONCOLLEGE_VALDOISE
+            MBNVERSION = ApiVersion.PROD_MONCOLLEGE_VALDOISE
+            break
+        case 'PROD_WEBCOLLEGE_SEINESAINTDENIS':
+            MBNURL = ApiUrl.PROD_WEBCOLLEGE_SEINESAINTDENIS
+            MBNVERSION = ApiVersion.PROD_WEBCOLLEGE_SEINESAINTDENIS
+            break
+        case 'PROD_ECLAT_BFC':
+            MBNURL = ApiUrl.PROD_ECLAT_BFC
+            MBNVERSION = ApiVersion.PROD_ECLAT_BFC
+            break
+    }
     try {
         console.log('Connexion à mbn...\n')
-        api = Kdecole.login(id, pass)
+        api = Kdecole.login(id, pass, MBNVERSION, MBNURL)
             .then((api) => {
                 console.log('Connecté')
                 document.getElementById('mbnId').classList.add('is-success')
                 document.getElementById('mbnP').classList.add('is-success')
                 document.getElementById('mbnId').disabled = true
                 document.getElementById('mbnP').disabled = true
+                document.getElementById('mbnUrl').disabled = true
                 mbnV.classList.add('is-success')
                 mbnV.innerHTML = "Connecté"
                 count++
                 store.set('token', api)
+                store.set('url', MBNURL)
+                store.set('version', MBNVERSION)
                 close()
             })
             .catch(function () { alert('Identifiant ou mot de passe incorrect'); })

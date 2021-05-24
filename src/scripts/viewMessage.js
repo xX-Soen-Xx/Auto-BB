@@ -4,7 +4,7 @@ const remote = require('electron').remote
 const store = new Store({ encryptionKey: "Clé de chiffrement" })
 var win = remote.getCurrentWindow()
 
-let user = new Kdecole(store.get('token'))
+let user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
 
 var repModal = document.getElementById("repModal");
 var repBtn = document.getElementById("repB");

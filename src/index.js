@@ -11,6 +11,8 @@ const connect = (user) => {
     store.delete('token')
     store.delete('cnedId')
     store.delete('cnedP')
+    store.delete('url')
+    store.delete('version')
     clearTimeout(timer)
   }
   const mainWindow = new BrowserWindow({
@@ -37,13 +39,18 @@ var ready = false
 let setupCompleted = false
 
 app.on('ready', () => {
-  if (store.get('token') === undefined || store.get('cnedId') === undefined || store.get('cnedP') === undefined) {
+  if (store.get('token') === undefined 
+  || store.get('cnedId') === undefined 
+  || store.get('cnedP') === undefined
+  || store.get('version') === undefined
+  || store.get('url') === undefined
+  ) {
     let newUser = true
     connect(newUser)
   } else {
     if (!ready) {
       ready = true
-      user = new Kdecole(store.get('token'))
+      user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
       createSystemTray();
       autoCheck()
     }
