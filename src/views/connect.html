@@ -12,14 +12,32 @@
 
 <body>
   <div id="mbn">
-    <label for="mbnId">Identifiant MBN</label>
+    <label for="mbnId">Identifiant ENT:</label>
     <br>
     <input class="input is-small" type="text" name="mbnId" id="mbnId">
     <br>
-    <label for="mbnP">Mot de passe unique</label>
+    <label for="mbnP">Mot de passe unique:</label>
     <br>
     <input class="input is-small" type="password" name="mbnP" id="mbnP">
-    <a href="./mbnhelp.html" target="_blank">Obtennir le mot de passe</a>
+    <a href="./mbnhelp.html" target="_blank">Obtenir le mot de passe</a>
+    <br>
+    <label for="mbnUrl">Votre ENT</label>
+    <br>
+    <select class="input is-small" id="mbnUrl" name="mbnUrl">
+      <option value="PROD_MON_BUREAU_NUMERIQUE">Mon Bureau Numérique</option>
+      <option value="PROD_MON_ENT_OCCITANIE">Mon ENT Occitanie</option>
+      <option value="PROD_ARSENE76">Arsene 76</option>
+      <option value="PROD_ENT27">ENT27</option>
+      <option value="PROD_ENTCREUSE">ENT Creuse</option>
+      <option value="PROD_AUVERGNERHONEALPES">ENT Auvergne-Rhône-Alpes</option>
+      <option value="PROD_SAVOIRSNUMERIQUES62">Savoirs Numériques 62</option>
+      <option value="PROD_AGORA06">Agora 06</option>
+      <option value="PROD_CYBERCOLLEGES42">Cyber Collèges 42</option>
+      <option value="PROD_ECOLLEGE_HAUTE_GARONNE">eCollège Haute-Garonne</option>
+      <option value="PROD_MONCOLLEGE_VALDOISE">Mon collège en Val d'Oise</option>
+      <option value="PROD_WEBCOLLEGE_SEINESAINTDENIS">Web collège Seine-Saint-Denis</option>
+      <option value="PROD_ECLAT_BFC">ECLAT-BFC</option>
+    </select>
     <br>
     <button id="mbnv" class="button is-small is-primary">Valider</button>
   </div>

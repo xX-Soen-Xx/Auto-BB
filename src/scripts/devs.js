@@ -4,7 +4,7 @@ const ejse = require('electron').remote.require('ejs-electron')
 const store = new Store({ encryptionKey: "Clé de chiffrement" })
 const ids = ejse.data('ids')
 
-let user = new Kdecole(store.get('token'))
+let user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
 
 
 function fait(index) {
