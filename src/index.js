@@ -35,15 +35,13 @@ let timer
 let tray = null
 let delay = 60000
 let actif = false
-var ready = false
+let ready = false
 let setupCompleted = false
 
 app.on('ready', () => {
-  if (store.get('token') === undefined 
-  || store.get('cnedId') === undefined 
+  if (store.get('token') === undefined
+  || store.get('cnedId') === undefined
   || store.get('cnedP') === undefined
-  || store.get('version') === undefined
-  || store.get('url') === undefined
   ) {
     let newUser = true
     connect(newUser)
@@ -65,18 +63,17 @@ app.on('window-all-closed', () => {
 
 function autoCheck() {
   if (!actif) {
-    if (delay == false) { }
-    else {
+    if(delay === true){
       user.getMessagerieBoiteReception()
         .then(function (info) {
           if (info.communications[0]) {
             let id = info.communications[0].id
             user.getCommunication(id).then((communication) => {
               let content = communication.participations[0].corpsMessage.toString().toLowerCase()
-              var index = content.search(/https:\/\/lycee/g)
-              var unsureLink = content.substring(index, index + 36)
-              var link = ""
-              if (unsureLink.search(/</g) == 35) {
+              const index = content.search(store.get('etabType') === 'lycee' ? /https:\/\/lycee/g : /https:\/\/college/g)
+              const unsureLink = content.substring(index, index + 36)
+              let link
+              if (unsureLink.search(/</g) === 35) {
                 link = unsureLink.substring(35, 1)
               } else link = unsureLink
               if (link.startsWith('h')) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
@@ -96,10 +93,10 @@ function manualCheck() {
           let id = info.communications[0].id
           user.getCommunication(id).then((communication) => {
             let content = communication.participations[0].corpsMessage.toString().toLowerCase()
-            var index = content.search(/https:\/\/lycee/g)
-            var unsureLink = content.substring(index, index + 36)
-            var link = ""
-            if (unsureLink.search(/</g) == 35) {
+            const index = content.search(store.get('etabType') === 'lycee' ? /https:\/\/lycee/g : /https:\/\/college/g)
+            const unsureLink = content.substring(index, index + 36)
+            let link
+            if (unsureLink.search(/</g) === 35) {
               link = unsureLink.substring(35, 1)
             } else link = unsureLink
             if (link.startsWith('h')) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
@@ -111,7 +108,7 @@ function manualCheck() {
 
 function createSystemTray() {
   tray = new Tray(path.join(__dirname, 'trayIcon.png'));
-  var contextMenu = Menu.buildFromTemplate([
+  const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Changer de comptes',
       click: function () { let newUser = false; connect(newUser) }
@@ -139,45 +136,45 @@ function createSystemTray() {
           label: '30 secondes',
           type: 'radio',
           id: '30000',
-          click: function (menuItem) { delay = 30000; clearTimeout(timer); autoCheck() }
+          click: () => { delay = 30000; clearTimeout(timer); autoCheck() }
         },
         {
           label: '1 minute',
           type: 'radio',
           id: '60000',
           checked: true,
-          click: function (menuItem) { delay = 60000; clearTimeout(timer); autoCheck() }
+          click: () => { delay = 60000; clearTimeout(timer); autoCheck() }
         },
         {
           label: '10 minutes',
           type: 'radio',
           id: '600000',
-          click: function (menuItem) { delay = 600000; clearTimeout(timer); autoCheck() }
+          click: () => { delay = 600000; clearTimeout(timer); autoCheck() }
         },
         {
           label: '30 minutes',
           type: 'radio',
           id: '1800000',
-          click: function (menuItem) { delay = 1800000; clearTimeout(timer); autoCheck() }
+          click: () => { delay = 1800000; clearTimeout(timer); autoCheck() }
         },
         {
           label: 'Désactivé',
           type: 'radio',
           id: 'd',
-          click: function (menuItem) { delay = false }
+          click: () => { delay = false }
         }
       ]
     },
     {
       label: 'Vérification manuelle',
-      click: function () { manualCheck() }
+      click: () => { manualCheck() }
     },
     { type: 'separator' },
     {
       label: 'Quitter',
       accelerator: 'CmdOrCtrl+Q',
       selector: 'terminate:',
-      click: function () { process.exit(0) }
+      click: () => { process.exit(0) }
     }
   ]);
   tray.setToolTip('Auto BB');
@@ -225,7 +222,7 @@ async function messagerie() {
   });
   mainWindow.resizable = true
   mainWindow.setMenuBarVisibility(false)
-  mainWindow.loadURL('file://' + __dirname + '/views/messagerie.ejs')
+  await mainWindow.loadURL('file://' + __dirname + '/views/messagerie.ejs')
 }
 
 async function travail() {

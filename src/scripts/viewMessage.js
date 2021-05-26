@@ -2,19 +2,19 @@ const { Kdecole } = require('kdecole-api')
 const Store = require('electron-store')
 const remote = require('electron').remote
 const store = new Store({ encryptionKey: "Clé de chiffrement" })
-var win = remote.getCurrentWindow()
+const win = remote.getCurrentWindow()
 
-let user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
+const user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
 
-var repModal = document.getElementById("repModal");
-var repBtn = document.getElementById("repB");
-var delModal = document.getElementById('delModal');
-var delBtn = document.getElementById('del')
-var span = document.getElementsByClassName("close")[0];
-var spanD = document.getElementsByClassName("close")[1];
-var bodyC = document.getElementById('reponse')
-var i = document.getElementsByName('send')
-var sendV = i[0]
+const repModal = document.getElementById("repModal");
+const repBtn = document.getElementById("repB");
+const delModal = document.getElementById('delModal');
+const delBtn = document.getElementById('del')
+const span = document.getElementsByClassName("close")[0];
+const spanD = document.getElementsByClassName("close")[1];
+const bodyC = document.getElementById('reponse')
+const i = document.getElementsByName('send')
+const sendV = i[0]
 
 sendV.disabled = true
 repBtn.onclick = function () {
@@ -44,7 +44,7 @@ window.onclick = function (event) {
 
 bodyC.addEventListener('change', updateValue)
 function updateValue() {
-    if (bodyC.value === undefined || bodyC.value == ' ' || bodyC.value == '') { sendV.disabled = true; bodyC.classList.add('is-danger') }
+    if (bodyC.value === undefined || bodyC.value === ' ' || bodyC.value === '') { sendV.disabled = true; bodyC.classList.add('is-danger') }
     else { sendV.disabled = false; bodyC.classList.remove('is-danger') }
 }
 
@@ -67,7 +67,7 @@ async function send(id) {
 }
 
 function del(id){
-    var yesbtn = document.getElementsByClassName('yesBtn')[0]
+    const yesbtn = document.getElementsByClassName('yesBtn')[0]
     yesbtn.classList.add('is-loading')
     yesbtn.innerHTML = ''
     yesbtn.disabled = true

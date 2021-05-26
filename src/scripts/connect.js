@@ -8,11 +8,11 @@ const store = new Store({ encryptionKey: "Clé de chiffrement" })
 let count = 0
 
 mbnV.onclick = e => {
-    var id = document.getElementById('mbnId').value
-    var pass = document.getElementById('mbnP').value
-    var ent = document.getElementById('mbnUrl').value
-    var MBNURL = ApiUrl.PROD_MON_BUREAU_NUMERIQUE
-    var MBNVERSION = ApiVersion.PROD_MON_BUREAU_NUMERIQUE
+    const id = document.getElementById('mbnId').value
+    const pass = document.getElementById('mbnP').value
+    const ent = document.getElementById('mbnUrl').value
+    let MBNURL = ApiUrl.PROD_MON_BUREAU_NUMERIQUE
+    let MBNVERSION = ApiVersion.PROD_MON_BUREAU_NUMERIQUE
     switch (ent) {
         case 'PROD_MON_BUREAU_NUMERIQUE':
             MBNURL = ApiUrl.PROD_MON_BUREAU_NUMERIQUE
@@ -69,8 +69,8 @@ mbnV.onclick = e => {
     }
     try {
         console.log('Connexion à mbn...\n')
-        api = Kdecole.login(id, pass, MBNVERSION, MBNURL)
-            .then((api) => {
+        Kdecole.login(id, pass, MBNVERSION, MBNURL)
+            .then((token) => {
                 console.log('Connecté')
                 document.getElementById('mbnId').classList.add('is-success')
                 document.getElementById('mbnP').classList.add('is-success')
@@ -80,7 +80,7 @@ mbnV.onclick = e => {
                 mbnV.classList.add('is-success')
                 mbnV.innerHTML = "Connecté"
                 count++
-                store.set('token', api)
+                store.set('token', token)
                 store.set('url', MBNURL)
                 store.set('version', MBNVERSION)
                 close()
@@ -94,18 +94,23 @@ mbnV.onclick = e => {
 
 cnedV.onclick = e => {
     document.getElementById('cnedv').disabled = true
-    var id = document.getElementById('cnedId').value
-    var pass = document.getElementById('cnedP').value
+    const id = document.getElementById('cnedId').value
+    const pass = document.getElementById('cnedP').value
+    const etabType = document.getElementById('etabType').value
     cnedV.classList.add('is-loading')
-    checkCNED(id, pass)
+    checkCNED(id, pass, etabType)
 }
 
-async function checkCNED(id, pass) {
+async function checkCNED(id, pass, etabType) {
     console.log('\n')
     const browser = await puppeteer.launch({ headless: true, executablePath: getChromiumExecPath() });
     const page = await browser.newPage();
     console.log('Ouverture du navigateur...\n')
-    await page.goto('https://lycee.cned.fr/login/index.php', { waitUntil: 'domcontentloaded', timeout: 0 });
+    if(etabType === 'lycee'){
+        await page.goto('https://lycee.cned.fr/login/index.php', { waitUntil: 'domcontentloaded', timeout: 0 })
+    } else {
+        await page.goto('https://college.cned.fr/login/index.php', { waitUntil: 'domcontentloaded', timeout: 0 })
+    }
     console.log('Accès à la page...\n')
     await page.type('#username', id, { delay: 30 })
     console.log('Ecriture de l\'identifiant...\n')
@@ -114,7 +119,7 @@ async function checkCNED(id, pass) {
     page.click('#loginbtn')
     console.log('Connexion...\n')
     await page.waitForNavigation({ waitUntil: 'domcontentloaded' })
-    if (await page.title() == "Tableau de bord") {
+    if (await page.title() === "Tableau de bord") {
         console.log('Connecté, fermeture...\n')
         await browser.close()
         document.getElementById('cnedId').classList.add('is-success')
@@ -129,6 +134,7 @@ async function checkCNED(id, pass) {
         count++
         store.set('cnedId', id)
         store.set('cnedP', pass)
+        store.set('etabType', etabType)
         close()
     } else {
         await browser.close()
@@ -142,8 +148,8 @@ async function checkCNED(id, pass) {
 }
 
 function close() {
-    if (count == 2) {
-        var BrowserWindow = remote.getCurrentWindow();
+    if (count === 2) {
+        const BrowserWindow = remote.getCurrentWindow();
         alert('La configuration initiale est maintenant terminée. \n\nL\'application va fermer. \nRelancez la et vous serez prêt')
         BrowserWindow.close()
     }
