@@ -1,6 +1,6 @@
 {
   "name": "auto-bboard",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Auto BB",
   "main": "src/index.js",
   "scripts": {
