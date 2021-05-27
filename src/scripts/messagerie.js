@@ -4,7 +4,7 @@ const store = new Store({ encryptionKey: "Clé de chiffrement" })
 const remote = require('electron').remote
 const ejse = require('electron').remote.require('ejs-electron')
 
-let user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
+const user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
 
 function viewMsg(id) {
     user.getCommunication(id).then((message) => {

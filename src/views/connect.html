@@ -52,6 +52,13 @@
     <br>
     <input class="input is-small" type="password" name="cnedP" id="cnedP">
     <br>
+    <label for="etabType">Type d'établissement:</label>
+    <br>
+    <select class="input is-small" name="etabType" id="etabType">
+      <option value="lycee" selected>Lycée</option>
+      <option value="college">Collège</option>
+    </select>
+    <br>
     <button id="cnedv" class="button is-small is-primary">Valider</button>
     <br>
   </div>
@@ -59,38 +66,38 @@
 
   <script defer>
     const mbnv = document.getElementById('mbnv')
-    var mid = document.getElementById('mbnId')
-    var mp = document.getElementById('mbnP')
+    const mid = document.getElementById('mbnId')
+    const mp = document.getElementById('mbnP')
     mbnv.disabled = true
 
     mid.addEventListener('change', updateValue)
     function updateValue(e) {
-      if (mid.value === undefined || mid.value == ' ' || mid.value == '') { mbnv.disabled = true; mid.classList.add('is-danger') }
+      if (mid.value === undefined || mid.value === ' ' || mid.value === '') { mbnv.disabled = true; mid.classList.add('is-danger') }
       else { mbnv.disabled = false; mid.classList.remove('is-danger') }
     }
 
     mp.addEventListener('change', updateValue)
     function updateValue(e) {
-      if (mp.value === undefined || mp.value == ' ' || mp.value == '') { mbnv.disabled = true; mp.classList.add('is-danger') }
+      if (mp.value === undefined || mp.value === ' ' || mp.value === '') { mbnv.disabled = true; mp.classList.add('is-danger') }
       else { mbnv.disabled = false; mp.classList.remove('is-danger') }
     }
   </script>
 
   <script defer>
     const cnedv = document.getElementById('cnedv')
-    var cnedid = document.getElementById('cnedId')
-    var cnedp = document.getElementById('cnedP')
+    const cnedid = document.getElementById('cnedId')
+    const cnedp = document.getElementById('cnedP')
     cnedv.disabled = true
 
     cnedid.addEventListener('change', updateValue)
     function updateValue(e) {
-      if (cnedid.value === undefined || cnedid.value == ' ' || cnedid.value == '') { cnedv.disabled = true; cnedid.classList.add('is-danger') }
+      if (cnedid.value === undefined || cnedid.value === ' ' || cnedid.value === '') { cnedv.disabled = true; cnedid.classList.add('is-danger') }
       else { cnedv.disabled = false; cnedid.classList.remove('is-danger') }
     }
 
     cnedp.addEventListener('change', updateValue)
     function updateValue(e) {
-      if (cnedp.value === undefined || cnedp.value == ' ' || cnedp.value == '') { cnedv.disabled = true; cnedp.classList.add('is-danger') }
+      if (cnedp.value === undefined || cnedp.value === ' ' || cnedp.value === '') { cnedv.disabled = true; cnedp.classList.add('is-danger') }
       else { cnedv.disabled = false; cnedp.classList.remove('is-danger') }
     }
   </script>

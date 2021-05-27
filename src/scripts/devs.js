@@ -4,14 +4,14 @@ const ejse = require('electron').remote.require('ejs-electron')
 const store = new Store({ encryptionKey: "Clé de chiffrement" })
 const ids = ejse.data('ids')
 
-let user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
+const user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
 
 
 function fait(index) {
-    var box = document.getElementById(index)
-    if (box.checked == true) {
+    const box = document.getElementById(index)
+    if (box.checked) {
         user.setActiviteFinished(ids[index].uidSeance, ids[index].uid, true)
-    } else if (box.checked == false) {
+    } else {
         user.setActiviteFinished(ids[index].uidSeance, ids[index].uid, false)
     }
 }
