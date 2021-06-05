@@ -14,7 +14,10 @@
     <p class="title is-3 has-text-light" id="objet">
         <%- content.objet %>
             <br>
-            <a href="messagerie.ejs" class="has-text-weight-semibold is-size-7" id="back">← Retour</a>
+            <% if (retour) { %>
+                <a href="messagerie.ejs" class="has-text-weight-semibold is-size-7" id="back">← Retour</a>
+                <% } %>
+
     </p>
     <div class="buttons is-grouped is-right are-small" id="tool">
         <button class="button is-primary is-outlined" id="repB">Répondre</button>
