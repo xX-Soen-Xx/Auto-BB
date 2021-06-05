@@ -10,6 +10,7 @@ function viewMsg(id) {
     user.getCommunication(id).then((message) => {
         user.setCommunicationLu(id)
         ejse.data('content', message)
+        ejse.data('retour', true)
         let win = remote.getCurrentWindow();
         win.loadURL(__dirname + '/viewMessage.ejs')
     })
