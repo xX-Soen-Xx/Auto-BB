@@ -1,10 +1,11 @@
-const { app, BrowserWindow, Menu, Tray } = require('electron');
+const { app, BrowserWindow, Menu, Tray, Notification } = require('electron');
+const { decode } = require('html-entities')
 const { Kdecole } = require('kdecole-api')
 const Store = require('electron-store')
 const puppeteer = require('puppeteer');
 const ejse = require('ejs-electron')
 const path = require('path');
-const store = new Store({ encryptionKey: "Clé de chiffrement"})
+const store = new Store({ encryptionKey: "Clé de chiffrement" })
 
 const connect = (user) => {
   if (!user) {
@@ -32,16 +33,19 @@ const connect = (user) => {
 
 let user
 let timer
+let ignoreIDs = []
 let tray = null
 let delay = 60000
 let actif = false
 let ready = false
 let setupCompleted = false
 
+app.setAppUserModelId("com.soen.autobb")
+
 app.on('ready', () => {
   if (store.get('token') === undefined
-  || store.get('cnedId') === undefined
-  || store.get('cnedP') === undefined
+    || store.get('cnedId') === undefined
+    || store.get('cnedP') === undefined
   ) {
     let newUser = true
     connect(newUser)
@@ -62,48 +66,64 @@ app.on('window-all-closed', () => {
 });
 
 function autoCheck() {
-  if (!actif) {
-    if(delay === true){
-      user.getMessagerieBoiteReception()
-        .then(function (info) {
-          if (info.communications[0]) {
-            let id = info.communications[0].id
-            user.getCommunication(id).then((communication) => {
-              let content = communication.participations[0].corpsMessage.toString().toLowerCase()
-              const index = content.search(store.get('etabType') === 'lycee' ? /https:\/\/lycee/g : /https:\/\/college/g)
-              const unsureLink = content.substring(index, index + 36)
-              let link
-              if (unsureLink.search(/</g) === 35) {
-                link = unsureLink.substring(35, 1)
-              } else link = unsureLink
-              if (link.startsWith('h')) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
-            })
+  if (actif) return
+  if (isNaN(delay)) return
+  user.getMessagerieBoiteReception()
+    .then(function (info) {
+      if (info.communications[0]) {
+        let id = info.communications[0].id
+        user.getCommunication(id).then((communication) => {
+          let content = communication.participations[0].corpsMessage.toString().toLowerCase()
+          const index = content.search(store.get('etabType') === 'lycee' ? /https:\/\/lycee/g : /https:\/\/college/g)
+          const unsureLink = content.substring(index, index + 36)
+          let link
+          if (unsureLink.search(/</g) === 35) {
+            link = unsureLink.substring(35, 0)
+          } else link = unsureLink
+          if (link.startsWith('h')) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
+          else if (info.communications[0].etatLecure === false) {
+            if (ignoreIDs.indexOf(id) > -1) return
+            let objet = decode(info.communications[0].objet)
+            let exp = info.communications[0].expediteurActuel.libelle
+            let nvMessage = new Notification({ title: 'Nouveau message', body: `De : ${exp} \n${objet}` })
+            nvMessage.show()
+            nvMessage.on('click', (id) => { opnMessage(communication) })
+            ignoreIDs.push(id)
           }
         })
-      timer = setTimeout(() => { autoCheck() }, delay);
-    }
-  }
+      }
+
+    })
+  timer = setTimeout(() => { autoCheck() }, delay);
 }
 
 function manualCheck() {
-  if (!actif) {
-    user.getMessagerieBoiteReception()
-      .then(function (info) {
-        if (info.communications[0]) {
-          let id = info.communications[0].id
-          user.getCommunication(id).then((communication) => {
-            let content = communication.participations[0].corpsMessage.toString().toLowerCase()
-            const index = content.search(store.get('etabType') === 'lycee' ? /https:\/\/lycee/g : /https:\/\/college/g)
-            const unsureLink = content.substring(index, index + 36)
-            let link
-            if (unsureLink.search(/</g) === 35) {
-              link = unsureLink.substring(35, 1)
-            } else link = unsureLink
-            if (link.startsWith('h')) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
-          })
-        }
-      })
-  }
+  if (actif) return
+  user.getMessagerieBoiteReception()
+    .then(function (info) {
+      if (info.communications[0]) {
+        let id = info.communications[0].id
+        user.getCommunication(id).then((communication) => {
+          let content = communication.participations[0].corpsMessage.toString().toLowerCase()
+          const index = content.search(store.get('etabType') === 'lycee' ? /https:\/\/lycee/g : /https:\/\/college/g)
+          const unsureLink = content.substring(index, index + 36)
+          let link
+          if (unsureLink.search(/</g) === 35) {
+            link = unsureLink.substring(35, 0)
+          } else link = unsureLink
+          if (link.startsWith('h')) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
+          else if (info.communications[0].etatLecure === false) {
+            if (ignoreIDs.indexOf(id) > -1) return
+            let objet = decode(info.communications[0].objet)
+            let exp = info.communications[0].expediteurActuel.libelle
+            let nvMessage = new Notification({ title: 'Nouveau message', body: `De : ${exp} \n${objet}` })
+            nvMessage.show()
+            nvMessage.on('click', (id) => { opnMessage(communication) })
+            ignoreIDs.push(id)
+          }
+        })
+      }
+    })
 }
 
 function createSystemTray() {
@@ -188,12 +208,15 @@ async function goSession(link) {
     ignoreDefaultArgs: ['--mute-audio'],
     executablePath: getChromiumExecPath()
   });
-  const page = await browser.newPage();
+  const page = (await browser.pages())[0]
+  await page.evaluateOnNewDocument(() => {
+    delete navigator.__proto__.webdriver;
+  });
   page.goto(link, { waitUntil: 'domcontentloaded' })
   await page.waitForNavigation({ waitUntil: 'domcontentloaded' })
   await page.type('#username', store.get('cnedId'), { delay: 30 })
   await page.type('#password', store.get('cnedP'), { delay: 30 })
-  page.click('#loginbtn')
+  page.keyboard.press('Enter')
 
   browser.on('disconnected', function () {
     actif = false
@@ -206,10 +229,13 @@ function getChromiumExecPath() {
 }
 
 async function messagerie() {
+  let msgs
   await user.getMessagerieBoiteReception()
     .then(function (info) {
+      msgs = info
       ejse.data('messages', info)
     })
+  if (msgs.communications[0] === undefined) { new Notification({ title: 'Aucun message' }).show(); return }
   let mainWindow = new BrowserWindow({
     width: 1410,
     height: 860,
@@ -233,8 +259,7 @@ async function travail() {
   await user.getTravailAFaire().then(function (taf) {
     data = taf
   })
-
-
+  if (data.listeTravaux.length === 0) { tafCallback(false); return }
   await data.listeTravaux.forEach(async function (travail, index, array) {
     await user.getContenuActivite(travail.listTravail[0].uidSeance, travail.listTravail[0].uid).then(async function (content) {
       dev.push(content)
@@ -246,11 +271,36 @@ async function travail() {
     ejse.data('devoirs', dev)
     ejse.data('ids', ids)
     cycl++
-    if (cycl === array.length) tafCallback()
+    if (cycl === array.length) tafCallback(true)
   })
+
 }
 
-function tafCallback() {
+function tafCallback(present) {
+  if (present) {
+    let mainWindow = new BrowserWindow({
+      width: 1410,
+      height: 860,
+      frame: true,
+      webPreferences: {
+        enableRemoteModule: true,
+        nodeIntegration: true,
+        contextIsolation: false
+      }
+    });
+    mainWindow.resizable = true
+    mainWindow.setMenuBarVisibility(false)
+    mainWindow.loadURL('file://' + __dirname + '/views/devs.ejs')
+  }
+  else {
+    new Notification({ title: 'Aucun travail à faire' }).show()
+  }
+}
+
+function opnMessage(content) {
+  let ejse = require('ejs-electron')
+  ejse.data('content', content)
+  ejse.data('retour', false)
   let mainWindow = new BrowserWindow({
     width: 1410,
     height: 860,
@@ -263,5 +313,5 @@ function tafCallback() {
   });
   mainWindow.resizable = true
   mainWindow.setMenuBarVisibility(false)
-  mainWindow.loadURL('file://' + __dirname + '/views/devs.ejs')
+  mainWindow.loadURL(__dirname + '/views/viewMessage.ejs')
 }
