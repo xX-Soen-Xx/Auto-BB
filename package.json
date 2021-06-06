@@ -1,6 +1,6 @@
 {
   "name": "auto-bboard",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Auto BB",
   "main": "src/index.js",
   "scripts": {
@@ -16,7 +16,10 @@
     "copyright": "©2021 Soen",
     "win": {
       "icon": "icone.png",
-      "target": ["nsis", "portable"]
+      "target": [
+        "nsis",
+        "portable"
+      ]
     },
     "nsis": {
       "oneClick": true,
@@ -33,14 +36,14 @@
   "author": "Soen",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^11.1.1",
+    "electron": "^13.1.1",
     "electron-builder": "^22.11.5"
   },
   "dependencies": {
     "ejs-electron": "^2.1.1",
-    "electron-store": "^7.0.3",
+    "electron-store": "^8.0.0",
     "html-entities": "^2.3.2",
-    "kdecole-api": "^1.1.1",
-    "puppeteer": "^8.0.0"
+    "kdecole-api": "^1.2.1",
+    "puppeteer": "^10.0.0"
   }
 }
