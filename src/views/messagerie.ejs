@@ -14,7 +14,7 @@
 <body>
     <h1 class="title is-1">Messagerie</h1>
     <div class="msgContainer columns is-desktop is-multiline has-text-light">
-        <% messages.communications.forEach(element=> { %>
+        <% messages.communications.forEach(function (element, index) { %>
             <button onclick="viewMsg(this.id)" class="message has-text-light is-narrow" id=<%=element.id %>>
                 <div class="message column is-narrow is-full has-background-dark div">
                     <% if (element.etatLecure) { %>
@@ -31,6 +31,9 @@
                     </p>
                 </div>
             </button>
+            <% if (messages.communications.length === index+1) { %>
+                <br>
+            <% } %> 
         <% }) %>
     </div>
 </body>
