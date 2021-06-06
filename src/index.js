@@ -19,10 +19,11 @@ const connect = (user) => {
   const mainWindow = new BrowserWindow({
     width: 500,
     height: 300,
-    frame: true,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      contextIsolation: false
     }
   });
   mainWindow.resizable = false
@@ -37,27 +38,28 @@ let ignoreIDs = []
 let tray = null
 let delay = 60000
 let actif = false
-let ready = false
 let setupCompleted = false
 
 app.setAppUserModelId("com.soen.autobb")
 
-app.on('ready', () => {
+app.once('ready', async () => {
   if (store.get('token') === undefined
     || store.get('cnedId') === undefined
     || store.get('cnedP') === undefined
   ) {
-    let newUser = true
-    connect(newUser)
+    connect(true)
   } else {
-    if (!ready) {
-      ready = true
       user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
+      try {
+      await user.starting()
+      } catch (e) {
+        connect(false)
+        new Notification({ title: 'Erreur lors de la connection', body: 'Merci de vous reconnecter'}).show()
+        return
+      }
       createSystemTray();
       autoCheck()
-    }
   }
-
 })
 
 app.on('window-all-closed', () => {
@@ -131,7 +133,7 @@ function createSystemTray() {
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Changer de comptes',
-      click: function () { let newUser = false; connect(newUser) }
+      click: function () {connect(false) }
     },
     {
       label: 'Outils',
