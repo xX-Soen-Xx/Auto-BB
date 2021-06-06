@@ -12,14 +12,13 @@
 
 <body>
   <div id="mbn">
-    <label for="mbnId">Identifiant ENT:</label>
+    <label for="mbnId">Identifiant ENT</label>
     <br>
     <input class="input is-small" type="text" name="mbnId" id="mbnId">
     <br>
-    <label for="mbnP">Mot de passe unique:</label>
+    <label id="label" for="mbnP">Mot de passe unique <a href="./mbnhelp.html" target="_blank">?</a></label>
     <br>
     <input class="input is-small" type="password" name="mbnP" id="mbnP">
-    <a href="./mbnhelp.html" target="_blank">Obtenir le mot de passe</a>
     <br>
     <label for="mbnUrl">Votre ENT</label>
     <br>
@@ -52,7 +51,7 @@
     <br>
     <input class="input is-small" type="password" name="cnedP" id="cnedP">
     <br>
-    <label for="etabType">Type d'établissement:</label>
+    <label for="etabType">Type d'établissement</label>
     <br>
     <select class="input is-small" name="etabType" id="etabType">
       <option value="lycee" selected>Lycée</option>
@@ -63,7 +62,7 @@
     <br>
   </div>
 
-
+  
   <script defer>
     const mbnv = document.getElementById('mbnv')
     const mid = document.getElementById('mbnId')
@@ -103,5 +102,4 @@
   </script>
 
 </body>
-
 </html>
