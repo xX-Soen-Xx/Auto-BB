@@ -1,6 +1,6 @@
 {
   "name": "auto-bboard",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Auto BB",
   "main": "src/index.js",
   "scripts": {
@@ -36,10 +36,11 @@
   "author": "Soen",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^13.1.1",
-    "electron-builder": "^22.11.5"
+    "electron": "^13.1.2",
+    "electron-builder": "^22.11.7"
   },
   "dependencies": {
+    "dotenv": "^10.0.0",
     "ejs-electron": "^2.1.1",
     "electron-store": "^8.0.0",
     "html-entities": "^2.3.2",

@@ -5,7 +5,9 @@ const Store = require('electron-store')
 const puppeteer = require('puppeteer');
 const ejse = require('ejs-electron')
 const path = require('path');
-const store = new Store({ encryptionKey: "Clé de chiffrement" })
+require('dotenv').config()
+const store = new Store({ encryptionKey: process.env.encryptionKey })
+
 
 const connect = (user) => {
   if (!user) {
@@ -38,6 +40,7 @@ let ignoreIDs = []
 let tray = null
 let delay = 60000
 let actif = false
+let autoConnect = true
 let setupCompleted = false
 
 app.setAppUserModelId("com.soen.autobb")
@@ -49,16 +52,16 @@ app.once('ready', async () => {
   ) {
     connect(true)
   } else {
-      user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
-      try {
+    user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
+    try {
       await user.starting()
-      } catch (e) {
-        connect(false)
-        new Notification({ title: 'Erreur lors de la connection', body: 'Merci de vous reconnecter'}).show()
-        return
-      }
-      createSystemTray();
-      autoCheck()
+    } catch (e) {
+      connect(false)
+      new Notification({ title: 'Erreur lors de la connection', body: 'Merci de vous reconnecter' }).show()
+      return
+    }
+    createSystemTray();
+    autoCheck()
   }
 })
 
@@ -74,6 +77,7 @@ function autoCheck() {
     .then(function (info) {
       if (info.communications[0]) {
         let id = info.communications[0].id
+        let exp = info.communications[0].expediteurActuel.libelle
         user.getCommunication(id).then((communication) => {
           let content = communication.participations[0].corpsMessage.toString().toLowerCase()
           const index = content.search(store.get('etabType') === 'lycee' ? /https:\/\/lycee/g : /https:\/\/college/g)
@@ -82,11 +86,22 @@ function autoCheck() {
           if (unsureLink.search(/</g) === 35) {
             link = unsureLink.substring(35, 0)
           } else link = unsureLink
-          if (link.startsWith('h')) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
+          if (link.startsWith('h')) {
+            if (autoConnect) {
+              goSession(link); actif = true; clearTimeout(timer);
+              user.deleteCommunication(id)
+            } else {
+              if (ignoreIDs.indexOf(id) > -1) return
+              let prompt = new Notification({ title: 'Classe en ligne trouvée', body: `De : ${exp} \nCliquer pour se connecter` })
+              prompt.show()
+              ignoreIDs.push(id)
+              prompt.on('click', () => { goSession(link); actif = true; clearTimeout(timer); })
+              prompt.on('close', () => { user.deleteCommunication(id) })
+            }
+          }
           else if (info.communications[0].etatLecure === false) {
             if (ignoreIDs.indexOf(id) > -1) return
             let objet = decode(info.communications[0].objet)
-            let exp = info.communications[0].expediteurActuel.libelle
             let nvMessage = new Notification({ title: 'Nouveau message', body: `De : ${exp} \n${objet}` })
             nvMessage.show()
             nvMessage.on('click', (id) => { opnMessage(communication) })
@@ -109,15 +124,28 @@ function manualCheck() {
           let content = communication.participations[0].corpsMessage.toString().toLowerCase()
           const index = content.search(store.get('etabType') === 'lycee' ? /https:\/\/lycee/g : /https:\/\/college/g)
           const unsureLink = content.substring(index, index + 36)
+          let exp = info.communications[0].expediteurActuel.libelle
           let link
           if (unsureLink.search(/</g) === 35) {
             link = unsureLink.substring(35, 0)
           } else link = unsureLink
-          if (link.startsWith('h')) { goSession(link); actif = true; clearTimeout(timer); user.deleteCommunication(id) }
+          if (link.startsWith('h')) {
+            if (autoConnect) {
+              goSession(link); actif = true;
+              clearTimeout(timer);
+              user.deleteCommunication(id)
+            } else {
+              if (ignoreIDs.indexOf(id) > -1) return
+              let prompt = new Notification({ title: 'Classe en ligne trouvée', body: `De : ${exp} \nCliquer pour se connecter` })
+              prompt.show()
+              ignoreIDs.push(id)
+              prompt.on('click', () => { goSession(link); actif = true; clearTimeout(timer); })
+              prompt.on('close', () => { user.deleteCommunication(id) })
+            }
+          }
           else if (info.communications[0].etatLecure === false) {
             if (ignoreIDs.indexOf(id) > -1) return
             let objet = decode(info.communications[0].objet)
-            let exp = info.communications[0].expediteurActuel.libelle
             let nvMessage = new Notification({ title: 'Nouveau message', body: `De : ${exp} \n${objet}` })
             nvMessage.show()
             nvMessage.on('click', (id) => { opnMessage(communication) })
@@ -133,7 +161,7 @@ function createSystemTray() {
   const contextMenu = Menu.buildFromTemplate([
     {
       label: 'Changer de comptes',
-      click: function () {connect(false) }
+      click: function () { connect(false) }
     },
     {
       label: 'Outils',
@@ -190,6 +218,12 @@ function createSystemTray() {
     {
       label: 'Vérification manuelle',
       click: () => { manualCheck() }
+    },
+    {
+      label: "Connexion auto",
+      type: 'checkbox',
+      checked: true,
+      click: (item) => { if (item.checked) autoConnect = true; else autoConnect = false }
     },
     { type: 'separator' },
     {

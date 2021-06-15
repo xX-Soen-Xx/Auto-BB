@@ -1,8 +1,9 @@
 const { Kdecole } = require('kdecole-api')
 const Store = require('electron-store')
 const remote = require('electron').remote
-const store = new Store({ encryptionKey: "Clé de chiffrement" })
 const win = remote.getCurrentWindow()
+require('dotenv').config()
+const store = new Store({ encryptionKey: process.env.encryptionKey })
 
 const user = new Kdecole(store.get('token'), store.get('version'), 0, store.get('url'))
 

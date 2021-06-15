@@ -1,10 +1,12 @@
 const { Kdecole, ApiUrl , ApiVersion} = require('kdecole-api')
+const cnedV = document.getElementById('cnedv')
+const mbnV = document.getElementById('mbnv')
 const remote = require('electron').remote
 const Store = require('electron-store')
-const puppeteer = require('puppeteer');
-const mbnV = document.getElementById('mbnv')
-const cnedV = document.getElementById('cnedv')
-const store = new Store({ encryptionKey: "Clé de chiffrement" })
+const puppeteer = require('puppeteer')
+require('dotenv').config()
+const store = new Store({ encryptionKey: process.env.encryptionKey })
+
 let count = 0
 
 mbnV.onclick = e => {
