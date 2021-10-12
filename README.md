@@ -1,3 +1,12 @@
+# Repo obsolète 
+Le service de classes en ligne du CNED à été shutdown et remplacé par "Eduscol" ***([source](https://lycee.cned.fr/))***
+> Les plateformes Ecole, Collège et Lycée ne sont plus accessibles.
+
+᲼
+
+᲼
+
+᲼
 # Auto-BB
 Application premettant de se connecter automatiquement aux classes en ligne via lycee.cned.fr
 
